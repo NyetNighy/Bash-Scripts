@@ -7,89 +7,63 @@ A collection of offensive security / OSINT bash scripts for Kali Linux.
 ```
 Bash-Git/
 ├── email_harvester/       # Domain email harvesting + LinkedIn enum + JSON output
-│   ├── email_harvester.sh       # Main (delay, -j, -f, -r flags)
-│   ├── email_harvester_v2.sh    # Pre-update backup
-│   ├── email_harvester_fixed.sh  # Partial fix variant
-│   └── email_harvester_test.sh   # Test variant
-│
 ├── reconnaissance/        # Subdomain enum, recon, OSINT
-│   ├── osint_recon_basic.sh     # Basic OSINT scan
-│   ├── osint_recon_extended.sh  # Extended OSINT
-│   ├── osint_recon_full.sh      # Full OSINT sweep
-│   ├── domain_enum_basic.sh      # Basic domain enumeration
-│   ├── domain_enum_dnsbrute.sh  # DNS brute-force enum
-│   ├── domain_enum_full.sh      # Full domain enumeration
-│   ├── AutoRecon.sh             # Automated recon wrapper
-│   ├── MEGA.sh                  # MEGA recon framework
-│   ├── Recon.sh                 # Recon main
-│   └── ReconExp.sh              # Recon expanded
-│
 ├── vulnerability_scanning/  # Nuclei, Burp, ZAP, web vuln
-│   ├── nuclei_web_scanner.sh
-│   ├── web_vuln_scan.sh
-│   ├── zap_web_vuln_scanner.sh
-│   └── burp_auto_scan.sh
-│
 ├── web_scanning/         # Web assessment
-│   ├── web_scan_auto.sh
-│   └── web_scan_full.sh
-│
 ├── network_scanning/     # Nmap, MySQL, ping sweeps
-│   ├── nmap_basic_scan.sh
-│   ├── nmap_aggressive_scan.sh
-│   ├── nmap_xml_auto.sh
-│   ├── ping_sweep.sh
-│   ├── mysql_enum_basic.sh
-│   └── mysql_enum_variants.sh
-│
 ├── active_directory/     # AD assessment
-│   ├── ad_enum_basic.sh
-│   ├── ad_enum_http_enum.sh
-│   ├── ad_enum_http_enum_v1.sh
-│   ├── ad_enum_http_enum_nc.sh
-│   └── ad_enum_http_enum_ops.sh
-│
-├── automation/           # Metasploit automation
-│   ├── msf_exploit_framework.sh
-│   ├── msf_nmap_autopwn.sh
-│   ├── msf_reverse_handler_auto.sh
-│   ├── msf_meterpreter_handler.sh
-│   └── msf_auto_enhanced.sh
-│
-└── misc/                # Fuzzing, maintenance, AI tools
-    ├── stealth_fuzz_quick.sh
-    ├── stealth_fuzz_setup.sh
-    ├── fuzz_setup_v2.sh
-    ├── robin_ai.sh
-    ├── system_update.sh
-    └── kali-maintenance.sh
+├── automation/          # Metasploit automation
+├── misc/                # Fuzzing, maintenance, AI tools
+├── subdomain_takeover/  # DNS dangling record detection
+├── ssl_tls_audit/       # Certificate chain + cipher + vuln audit
+├── git_leak_scan/       # Secret/key scanning in git repos
+├── api_fuzz/            # REST API fuzzing (SQLi, XSS, IDOR, SSTI, NoSQL)
+├── cloud_enum/          # AWS/GCP/Azure cloud resource enumeration
+├── password_spray/      # Multi-target password spray with lockout detection
+├── payload_gen/         # MSFVenom wrapper with presets and encoders
+└── shell_handler/       # Multi-listener reverse shell manager
 ```
 
 ## ⚠️ Disclaimer
 
 All scripts are for **authorized, ethical security testing only**. Do not use against targets without explicit permission.
 
-## 📧 Email Harvester Quick Start
+## 📧 Quick Start
 
 ```bash
-# Basic
-./email_harvester/email_harvester.sh example.com
-
-# With delays, JSON output, staff subdomain filter
+# Email harvester
 ./email_harvester/email_harvester.sh example.com -d 1 -j -f staff
 
-# With rate-limit backoff
-./email_harvester/email_harvester.sh example.com -r -d 2 -j
+# Subdomain takeover
+./subdomain_takeover/subdomain_takeover_check.sh example.com -j
 
-# Help
-./email_harvester/email_harvester.sh -h
+# SSL/TLS audit
+./ssl_tls_audit/ssl_tls_audit.sh example.com -p 443 -j
+
+# Git leak scan
+./git_leak_scan/git_leak_scan.sh https://github.com/user/repo -j
+
+# API fuzzing
+./api_fuzz/api_fuzz.sh https://api.example.com -m GET -a BearerToken -j
+
+# Cloud enum (AWS/GCP/Azure)
+./cloud_enum/cloud_enum.sh aws -j -r eu-west-1
+
+# Password spray
+./password_spray/password_spray.sh targets.txt passwords.txt -w https://hooks.slack.com/... -t 5
+
+# Payload generation
+./payload_gen/payload_gen.sh windows tcp_rev exe 192.168.1.100 4444 -e shikata_ga_nai -i 3
+
+# Shell handler
+./shell_handler/shell_handler.sh start -l 4444 -p tcp
 ```
 
-## 🔧 Requirements
+## 🔧 Core Requirements
 
 - Kali Linux
 - Core: `dnsenum`, `theHarvester`, `sublist3r`, `assetfinder`, `amass`, `gau`, `httpx`, `curl`, `jq`
-- Optional: `h8mail`, `nuclei`, `nmap`, `nikto`, `zap`, `burp`
+- Optional: `h8mail`, `nuclei`, `nmap`, `nikto`, `zap`, `burp`, `msfvenom`, `awscli`, `gh`
 
 ## 📝 License
 
