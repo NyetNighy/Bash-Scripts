@@ -70,6 +70,10 @@ VALID_EMAILS="$OUTPUT_DIR/valid_emails.txt"
 SUBDOMAIN_FILE="$OUTPUT_DIR/subdomains.txt"
 JSON_FILE="$OUTPUT_DIR/results.json"
 
+# Initialize output files once at start (do not truncate again later)
+: > "$RAW_EMAILS"
+: > "$SUBDOMAIN_FILE"
+
 log() {
     echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')] $1${NC}" | tee -a "$LOG_FILE"
 }
@@ -151,7 +155,7 @@ log "  [LinkedIn via Hunter.io]"
 apply_delay
 if [[ -n "${HUNTER_API_KEY:-}" ]]; then
     result=$(curl -s "https://api.hunter.io/v2/domain-search?domain=${DOMAIN}&api_key=${HUNTER_API_KEY}" | \
-        jq -r '.data.email[] | .value' 2>/dev/null)
+        jq -r '.data.emails[]?.value // empty' 2>/dev/null)
     [[ -n "$result" ]] && echo "$result" >> "$RAW_EMAILS" || true
 else
     log "    HUNTER_API_KEY not set, skipping"
@@ -251,15 +255,12 @@ for site_dork in \
 done
 
 # ═══════════════════════════════════════════════════════════
-# PHASE 7: Aggregate + deduplicate
+# PHASE 7: Aggregate tool outputs into RAW (append — do not wipe)
 # ═══════════════════════════════════════════════════════════
 log "Phase 7: Aggregating and extracting emails"
 
-: > "$RAW_EMAILS"
-
-extract_domain_emails "$OUTPUT_DIR/dnsenum.txt" "$RAW_EMAILS"
+# Merge emails found in tool output files without clearing live-phase finds
 extract_domain_emails "$OUTPUT_DIR/sublist3r.txt" "$RAW_EMAILS"
-extract_domain_emails "$OUTPUT_DIR/assetfinder.txt" "$RAW_EMAILS"
 extract_domain_emails "$OUTPUT_DIR/amass.txt" "$RAW_EMAILS"
 extract_domain_emails "$OUTPUT_DIR/theharvester.txt" "$RAW_EMAILS"
 extract_domain_emails "$OUTPUT_DIR/h8mail.txt" "$RAW_EMAILS"
@@ -330,7 +331,7 @@ if [[ "$JSON_OUTPUT" == "true" ]]; then
         while IFS= read -r email; do
             email=$(echo "$email" | tr -d '\r' | xargs)
             [[ -z "$email" ]] && continue
-            local subdomain="${email##*@}"
+            subdomain="${email##*@}"
             echo "    {"
             echo "      \"address\": \"$email\","
             echo "      \"subdomain\": \"$subdomain\","
