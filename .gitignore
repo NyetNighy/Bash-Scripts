@@ -1,0 +1,22 @@
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local secrets / output
+.env
+.env.*
+!.env.example
+*.log
+output/
+results/
+*.json
+!**/example*.json
+
+# Temp / scratch
+*.tmp
+*.bak
+*~
