@@ -5,7 +5,7 @@ A collection of offensive security / OSINT bash scripts for Kali Linux.
 ## 📁 Structure
 
 ```
-Bash-Git/
+Bash-Scripts/
 ├── email_harvester/       # Domain email harvesting + LinkedIn enum + JSON output
 ├── reconnaissance/        # Subdomain enum, recon, OSINT
 ├── vulnerability_scanning/  # Nuclei, Burp, ZAP, web vuln
@@ -28,6 +28,12 @@ Bash-Git/
 
 All scripts are for **authorized, ethical security testing only**. Do not use against targets without explicit permission.
 
+### Password spray notes
+
+- Microsoft targets use the **ROPC** (resource owner password credentials) flow against `login.microsoftonline.com` with a well-known public client ID (Azure PowerShell). Many tenants disable ROPC; prefer lab tenants and your own app registration where required.
+- **Slack webhooks never include plaintext passwords** — only target identity and outcome.
+- Hits with passwords are written only to local files under the output directory; rotate any confirmed credentials immediately.
+
 ## 📧 Quick Start
 
 ```bash
@@ -49,7 +55,7 @@ All scripts are for **authorized, ethical security testing only**. Do not use ag
 # Cloud enum (AWS/GCP/Azure)
 ./cloud_enum/cloud_enum.sh aws -j -r eu-west-1
 
-# Password spray
+# Password spray (Slack alerts redact passwords)
 ./password_spray/password_spray.sh targets.txt passwords.txt -w https://hooks.slack.com/... -t 5
 
 # Payload generation
